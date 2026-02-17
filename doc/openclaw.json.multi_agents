@@ -1,0 +1,299 @@
+{
+  "meta": {
+    "lastTouchedVersion": "2026.2.15",
+    "lastTouchedAt": "2026-02-17T00:02:42.544Z"
+  },
+  "wizard": {
+    "lastRunAt": "2026-02-17T00:02:42.518Z",
+    "lastRunVersion": "2026.2.15",
+    "lastRunCommand": "doctor",
+    "lastRunMode": "local"
+  },
+  "models": {
+    "mode": "merge",
+    "providers": {
+      "custom-ark-cn-beijing-volces-com": {
+        "baseUrl": "https://ark.cn-beijing.volces.com/api/coding/v3",
+        "apiKey": "volces key",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "ark-code-latest",
+            "name": "ark-code-latest (Custom Provider)",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 128000,
+            "maxTokens": 128000
+          }
+        ]
+      }
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "custom-ark-cn-beijing-volces-com/ark-code-latest"
+      },
+      "models": {
+        "custom-ark-cn-beijing-volces-com/ark-code-latest": {
+          "alias": "douban"
+        }
+      },
+      "workspace": "/home/sbc/.openclaw/workspace",
+      "compaction": {
+        "mode": "safeguard"
+      },
+      "timeoutSeconds": 600,
+      "maxConcurrent": 4,
+      "subagents": {
+        "maxConcurrent": 8
+      }
+    },
+    "list": [
+      {
+        "id": "main",
+        "default": true,
+        "name": "Main Agent",
+        "workspace": "/home/sbc/.openclaw/workspace",
+        "groupChat": {
+          "mentionPatterns": [
+            "@openclaw",
+            "<@1470784320825458779>"
+          ]
+        },
+        "subagents": {
+          "allowAgents": [
+            "*"
+          ]
+        }
+      },
+      {
+        "id": "project-manager",
+        "default": false,
+        "name": "Project Manager",
+        "workspace": "/home/sbc/.openclaw/agent-workspaces/project-manager",
+        "groupChat": {
+          "mentionPatterns": [
+            "@project manager",
+            "@project-manager",
+            "<@1471744135760449634>"
+          ]
+        },
+        "subagents": {
+          "allowAgents": [
+            "*"
+          ]
+        }
+      },
+      {
+        "id": "architecture",
+        "default": false,
+        "name": "Architecture Agent",
+        "workspace": "/home/sbc/.openclaw/agent-workspaces/architecture",
+        "groupChat": {
+          "mentionPatterns": [
+            "@architecture",
+            "<@1470620636966686790>"
+          ]
+        },
+        "subagents": {
+          "allowAgents": [
+            "*"
+          ]
+        }
+      },
+      {
+        "id": "coder",
+        "default": false,
+        "name": "Coder Agent",
+        "workspace": "/home/sbc/.openclaw/agent-workspaces/coder",
+        "groupChat": {
+          "mentionPatterns": [
+            "@coder",
+            "<@1471744135760449635>"
+          ]
+        },
+        "subagents": {
+          "allowAgents": [
+            "*"
+          ]
+        }
+      },
+      {
+        "id": "tester",
+        "default": false,
+        "name": "Tester Agent",
+        "workspace": "/home/sbc/.openclaw/agent-workspaces/tester",
+        "groupChat": {
+          "mentionPatterns": [
+            "@tester",
+            "<@1471744135760449636>"
+          ]
+        },
+        "subagents": {
+          "allowAgents": [
+            "*"
+          ]
+        }
+      }
+    ]
+  },
+  "tools": {
+    "sessions": {
+      "visibility": "all"
+    },
+    "agentToAgent": {
+      "enabled": true,
+      "allow": [
+        "main",
+        "project-manager",
+        "architecture",
+        "coder",
+        "tester"
+      ]
+    }
+  },
+  "bindings": [
+    {
+      "agentId": "project-manager",
+      "match": {
+        "channel": "discord",
+        "accountId": "project-manager"
+      }
+    },
+    {
+      "agentId": "architecture",
+      "match": {
+        "channel": "discord",
+        "accountId": "architecture"
+      }
+    },
+    {
+      "agentId": "coder",
+      "match": {
+        "channel": "discord",
+        "accountId": "coder"
+      }
+    },
+    {
+      "agentId": "tester",
+      "match": {
+        "channel": "discord",
+        "accountId": "tester"
+      }
+    },
+    {
+      "agentId": "main",
+      "match": {
+        "channel": "discord",
+        "accountId": "default"
+      }
+    }
+  ],
+  "messages": {
+    "ackReactionScope": "group-mentions"
+  },
+  "commands": {
+    "native": "auto",
+    "nativeSkills": "auto",
+    "restart": true
+  },
+  "session": {
+    "sendPolicy": {
+      "default": "allow",
+      "rules": []
+    },
+    "agentToAgent": {
+      "maxPingPongTurns": 5
+    }
+  },
+  "channels": {
+    "discord": {
+      "enabled": true,
+      "token": "channel token",
+      "allowBots": true,
+      "groupPolicy": "allowlist",
+      "guilds": {
+        "1470782986818555945": {
+          "requireMention": true,
+          "channels": {
+            "1470782988714246422": {
+              "allow": true
+            },
+            "1472369508113977446": {
+              "allow": true,
+              "requireMention": true
+            },
+            "1472202172895727828": {
+              "allow": true
+            }
+          }
+        }
+      },
+      "accounts": {
+        "default": {
+          "name": "OpenClaw Bot",
+          "groupPolicy": "allowlist"
+        },
+        "project-manager": {
+          "name": "Project Manager Bot",
+          "token": "you bot token",
+          "groupPolicy": "allowlist"
+        },
+        "architecture": {
+          "name": "Architecture Bot",
+          "token": "you bot token",
+          "groupPolicy": "allowlist"
+        },
+        "coder": {
+          "name": "Coder Bot",
+          "token": "you bot token",
+          "groupPolicy": "allowlist"
+        },
+        "tester": {
+          "name": "Tester Bot",
+          "token": "you bot token",
+          "groupPolicy": "allowlist"
+        }
+      }
+    }
+  },
+  "gateway": {
+    "port": 18789,
+    "mode": "local",
+    "bind": "loopback",
+    "auth": {
+      "mode": "token",
+      "token": "you gateway token"
+    },
+    "tailscale": {
+      "mode": "off",
+      "resetOnExit": false
+    },
+    "nodes": {
+      "denyCommands": [
+        "camera.snap",
+        "camera.clip",
+        "screen.record",
+        "calendar.add",
+        "contacts.add",
+        "reminders.add"
+      ]
+    }
+  },
+  "plugins": {
+    "entries": {
+      "discord": {
+        "enabled": true
+      }
+    }
+  }
+}
