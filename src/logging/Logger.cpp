@@ -104,6 +104,30 @@ void Logger::error(const std::string& message) {
     log(LogLevel::ERROR, message);
 }
 
+void Logger::log(LogLevel level, const std::string& tag, const std::string& message) {
+    log(level, "[" + tag + "] " + message);
+}
+
+void Logger::debug(const std::string& tag, const std::string& message) {
+    log(LogLevel::DEBUG, tag, message);
+}
+
+void Logger::info(const std::string& tag, const std::string& message) {
+    log(LogLevel::INFO, tag, message);
+}
+
+void Logger::warning(const std::string& tag, const std::string& message) {
+    log(LogLevel::WARNING, tag, message);
+}
+
+void Logger::error(const std::string& tag, const std::string& message) {
+    log(LogLevel::ERROR, tag, message);
+}
+
+void Logger::critical(const std::string& tag, const std::string& message) {
+    log(LogLevel::CRITICAL, tag, message);
+}
+
 void Logger::critical(const std::string& message) {
     log(LogLevel::CRITICAL, message);
 }

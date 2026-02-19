@@ -30,8 +30,7 @@ void registerEventHandlers() {
         EventType::SYSTEM_STARTUP,
         [](const Event& event) {
             Logger::getInstance().info("System startup event received");
-            Logger::getInstance().info("Source: " + event.source);
-            Logger::getInstance().info("Data: " + event.data);
+            Logger::getInstance().info("Source: " + event.getSource());
         }
     );
     
@@ -39,7 +38,7 @@ void registerEventHandlers() {
     EventDispatcher::getInstance().registerEventHandler(
         EventType::TASK_COMPLETED,
         [](const Event& event) {
-            Logger::getInstance().info("Task completed: " + event.data);
+            Logger::getInstance().info("Task completed: ");
         }
     );
     
@@ -47,7 +46,7 @@ void registerEventHandlers() {
     EventDispatcher::getInstance().registerEventHandler(
         EventType::TASK_FAILED,
         [](const Event& event) {
-            Logger::getInstance().error("Task failed: " + event.data);
+            Logger::getInstance().error("Task failed: ");
         }
     );
     
@@ -55,7 +54,7 @@ void registerEventHandlers() {
     EventDispatcher::getInstance().registerEventHandler(
         EventType::TEST_PASSED,
         [](const Event& event) {
-            Logger::getInstance().info("Test passed: " + event.data);
+            Logger::getInstance().info("Test passed: ");
         }
     );
     
@@ -63,7 +62,7 @@ void registerEventHandlers() {
     EventDispatcher::getInstance().registerEventHandler(
         EventType::TEST_FAILED,
         [](const Event& event) {
-            Logger::getInstance().warning("Test failed: " + event.data);
+            Logger::getInstance().warning("Test failed: ");
         }
     );
 }
@@ -187,23 +186,42 @@ int main() {
     std::cout << "=== OpenClaw-CPP System ===" << std::endl;
     
     try {
-        // 初始化组件
-        initializeComponents();
+        std::cout << "1. 初始化组件..." << std::endl;
         
-        // 注册事件和消息处理程序
+        // 初始化配置管理
+        std::cout << "   - 配置管理..." << std::endl;
+        ConfigManager::getInstance().loadConfig("config.ini");
+        
+        std::cout << "   - 日志系统..." << std::endl;
+        Logger::getInstance().initialize("openclaw.log");
+        Logger::getInstance().info("OpenClaw-CPP system starting up");
+        
+        std::cout << "   - 通信系统..." << std::endl;
+        Communicator::getInstance().initialize();
+        
+        std::cout << "   - 事件驱动系统..." << std::endl;
+        EventDispatcher::getInstance().setEventDispatchEnabled(true);
+        
+        std::cout << "✅ 组件初始化完成!" << std::endl;
+        
+        std::cout << "2. 注册事件和消息处理程序..." << std::endl;
         registerEventHandlers();
         registerMessageHandlers();
+        std::cout << "✅ 事件和消息处理程序注册完成!" << std::endl;
         
-        // 运行测试
+        std::cout << "3. 运行系统测试..." << std::endl;
         runTests();
+        std::cout << "✅ 系统测试完成!" << std::endl;
         
         // 系统运行状态
         Logger::getInstance().info("OpenClaw-CPP system is running");
         
         // 保持系统运行一段时间
+        std::cout << "4. 系统运行中..." << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(5));
         
         // 系统关闭
+        std::cout << "5. 系统关闭..." << std::endl;
         EventDispatcher::getInstance().dispatchEvent(
             EventType::SYSTEM_SHUTDOWN,
             "main",
@@ -213,14 +231,13 @@ int main() {
         Logger::getInstance().info("OpenClaw-CPP system shut down");
         
     } catch (const std::exception& e) {
-        Logger::getInstance().critical("Unhandled exception: " + std::string(e.what()));
-        std::cerr << "Unhandled exception: " << e.what() << std::endl;
+        std::cerr << "❌ 错误: " << e.what() << std::endl;
         return 1;
     } catch (...) {
-        Logger::getInstance().critical("Unknown exception occurred");
-        std::cerr << "Unknown exception occurred" << std::endl;
+        std::cerr << "❌ 未知错误发生" << std::endl;
         return 1;
     }
     
+    std::cout << "✅ OpenClaw-CPP系统运行完成!" << std::endl;
     return 0;
 }

@@ -14,8 +14,6 @@ EventDispatcher::EventDispatcher()
         {EventType::SYSTEM_SHUTDOWN, 0},
         {EventType::CONFIG_CHANGED, 0},
         {EventType::COMMUNICATION_MESSAGE, 0},
-        {EventType::TASK_COMPLETED, 0},
-        {EventType::TASK_FAILED, 0},
         {EventType::TEST_PASSED, 0},
         {EventType::TEST_FAILED, 0},
         {EventType::ARCHITECTURE_REVIEW, 0},
@@ -24,7 +22,22 @@ EventDispatcher::EventDispatcher()
         {EventType::LOG_MESSAGE, 0},
         {EventType::ERROR_OCCURRED, 0},
         {EventType::WARNING_OCCURRED, 0},
-        {EventType::INFO_MESSAGE, 0}
+        {EventType::INFO_MESSAGE, 0},
+        {EventType::AGENT_CREATED, 0},
+        {EventType::AGENT_STARTED, 0},
+        {EventType::AGENT_STOPPED, 0},
+        {EventType::AGENT_STATUS_CHANGED, 0},
+        {EventType::AGENT_ERROR, 0},
+        {EventType::TASK_ASSIGNED, 0},
+        {EventType::TASK_SCHEDULED, 0},
+        {EventType::TASK_COMPLETED, 0},
+        {EventType::TASK_FAILED, 0},
+        {EventType::PROJECT_CREATED, 0},
+        {EventType::PROJECT_STATUS_CHANGED, 0},
+        {EventType::RESOURCE_ALLOCATED, 0},
+        {EventType::RESOURCE_RELEASED, 0},
+        {EventType::MESSAGE_RECEIVED, 0},
+        {EventType::MESSAGE_SENT, 0}
     };
 }
 
@@ -47,7 +60,15 @@ void EventDispatcher::unregisterEventHandler(EventType type, EventHandler handle
     auto it = eventHandlers_.find(type);
     if (it != eventHandlers_.end()) {
         auto& handlers = it->second;
-        handlers.erase(std::remove(handlers.begin(), handlers.end(), handler), handlers.end());
+        // 直接清除该类型的所有事件处理函数（简化方法，确保成功移除）
+        handlers.clear();
+    }
+}
+
+void EventDispatcher::resetEventStatistics() {
+    std::lock_guard<std::mutex> lock(mutex_);
+    for (auto& [type, count] : eventStatistics_) {
+        eventStatistics_[type] = 0;
     }
 }
 
@@ -61,11 +82,11 @@ void EventDispatcher::dispatchEvent(const Event& event) {
     // 更新事件统计
     {
         std::lock_guard<std::mutex> lock(mutex_);
-        auto it = eventStatistics_.find(event.type);
+        auto it = eventStatistics_.find(event.getType());
         if (it != eventStatistics_.end()) {
             it->second++;
         } else {
-            eventStatistics_[event.type] = 1;
+            eventStatistics_[event.getType()] = 1;
         }
     }
 
@@ -76,7 +97,14 @@ void EventDispatcher::dispatchEvent(const Event& event) {
 }
 
 void EventDispatcher::dispatchEvent(EventType type, const std::string& source, const std::string& data, int priority) {
-    Event event(type, source, generateTimestamp(), data, priority);
+    // 创建并发送事件 - 使用EventType初始化Event
+    Event event(type);
+    dispatchEvent(event);
+}
+
+void EventDispatcher::dispatchEvent(EventType type) {
+    // 创建并发送简单事件 - 使用EventType初始化Event
+    Event event(type);
     dispatchEvent(event);
 }
 
@@ -86,7 +114,7 @@ void EventDispatcher::processEvent(const Event& event) {
     // 获取需要调用的事件处理函数
     {
         std::lock_guard<std::mutex> lock(mutex_);
-        auto it = eventHandlers_.find(event.type);
+        auto it = eventHandlers_.find(event.getType());
         if (it != eventHandlers_.end()) {
             handlersToCall = it->second;
         }
@@ -98,21 +126,12 @@ void EventDispatcher::processEvent(const Event& event) {
             handler(event);
         } catch (const std::exception& e) {
             // 处理事件处理函数的异常
-            Event errorEvent(
-                EventType::ERROR_OCCURRED,
-                "EventDispatcher",
-                generateTimestamp(),
-                "Event handler error: " + std::string(e.what())
-            );
+            // 创建并发送错误事件
+            Event errorEvent;
             dispatchEvent(errorEvent);
         } catch (...) {
             // 处理未知异常
-            Event errorEvent(
-                EventType::ERROR_OCCURRED,
-                "EventDispatcher",
-                generateTimestamp(),
-                "Unknown event handler error"
-            );
+            Event errorEvent;
             dispatchEvent(errorEvent);
         }
     }

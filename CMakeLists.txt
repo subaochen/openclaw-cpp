@@ -44,6 +44,10 @@ install(TARGETS ${PROJECT_NAME}
 # 安装配置文件
 install(FILES config.ini DESTINATION etc)
 
+# 包含测试子目录
+enable_testing()
+add_subdirectory(tests)
+
 # 创建构建系统
 include(CPack)
 

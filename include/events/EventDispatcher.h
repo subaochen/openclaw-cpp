@@ -7,50 +7,11 @@
 #include <mutex>
 #include <atomic>
 #include <string>
+#include "Event.h"
 
 namespace openclaw {
 
-// 事件类型定义
-enum class EventType {
-    SYSTEM_STARTUP,
-    SYSTEM_SHUTDOWN,
-    CONFIG_CHANGED,
-    COMMUNICATION_MESSAGE,
-    TASK_COMPLETED,
-    TASK_FAILED,
-    TEST_PASSED,
-    TEST_FAILED,
-    ARCHITECTURE_REVIEW,
-    CODE_REVIEW,
-    PERFORMANCE_MONITOR,
-    LOG_MESSAGE,
-    ERROR_OCCURRED,
-    WARNING_OCCURRED,
-    INFO_MESSAGE
-};
-
-// 事件数据结构
-struct Event {
-    EventType type;
-    std::string source;
-    std::string timestamp;
-    std::string data;
-    int priority;
-
-    Event() 
-        : type(EventType::INFO_MESSAGE), 
-          source("unknown"), 
-          timestamp(""), 
-          data(""), 
-          priority(0) {}
-    
-    Event(EventType t, const std::string& src, const std::string& ts, const std::string& d, int prio = 0)
-        : type(t), 
-          source(src), 
-          timestamp(ts), 
-          data(d), 
-          priority(prio) {}
-};
+// 事件数据结构（引用Event.h）
 
 // 事件处理函数类型
 using EventHandler = std::function<void(const Event&)>;
@@ -73,6 +34,9 @@ public:
     // 发送简单事件
     void dispatchEvent(EventType type, const std::string& source, const std::string& data, int priority = 0);
 
+    // 发送简单事件（只提供类型）
+    void dispatchEvent(EventType type);
+
     // 获取事件统计信息
     std::unordered_map<EventType, int> getEventStatistics() const;
 
@@ -90,6 +54,9 @@ public:
 
     // 获取事件队列大小
     size_t getEventQueueSize() const;
+
+    // 重置事件统计
+    void resetEventStatistics();
 
 private:
     EventDispatcher();

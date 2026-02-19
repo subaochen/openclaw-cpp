@@ -7,11 +7,14 @@ include_directories(${GTEST_INCLUDE_DIRS})
 # 查找测试源文件
 file(GLOB_RECURSE TEST_SOURCES "*.cpp")
 
-# 创建测试可执行文件
-add_executable(OpenClaw-CPP-Tests ${TEST_SOURCES})
+# 查找主项目源文件（排除主程序入口点）
+file(GLOB_RECURSE MAIN_SOURCES "${CMAKE_SOURCE_DIR}/src/communication/*.cpp" "${CMAKE_SOURCE_DIR}/src/config/*.cpp" "${CMAKE_SOURCE_DIR}/src/events/*.cpp" "${CMAKE_SOURCE_DIR}/src/logging/*.cpp")
 
-# 链接Google Test库
-target_link_libraries(OpenClaw-CPP-Tests ${GTEST_LIBRARIES} pthread)
+# 创建测试可执行文件
+add_executable(OpenClaw-CPP-Tests ${TEST_SOURCES} ${MAIN_SOURCES})
+
+# 链接Google Test库（包括main函数入口点）
+target_link_libraries(OpenClaw-CPP-Tests ${GTEST_BOTH_LIBRARIES} pthread)
 
 # 添加测试
 add_test(OpenClaw-CPP-Tests OpenClaw-CPP-Tests)
