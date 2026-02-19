@@ -1,0 +1,22 @@
+[2026-02-19 14:59:20.295] [INFO] [132606568568640] OpenClaw-CPP system starting up
+[2026-02-19 14:59:20.296] [INFO] [132606568568640] Running system tests
+[2026-02-19 14:59:20.296] [INFO] [132606568568640] Testing configuration system
+[2026-02-19 14:59:20.296] [INFO] [132606568568640] Log level: INFO
+[2026-02-19 14:59:20.296] [INFO] [132606568568640] Max log file size (MB): 10
+[2026-02-19 14:59:20.296] [INFO] [132606568568640] Debug mode: true
+[2026-02-19 14:59:20.296] [INFO] [132606568568640] Testing event dispatcher
+[2026-02-19 14:59:20.296] [INFO] [132606568568640] System startup event received
+[2026-02-19 14:59:20.296] [INFO] [132606568568640] Source: system
+[2026-02-19 14:59:20.296] [INFO] [132606568568640] Task completed: 
+[2026-02-19 14:59:20.296] [INFO] [132606568568640] Test passed: 
+[2026-02-19 14:59:20.296] [INFO] [132606568568640] Testing communication system
+[2026-02-19 14:59:20.397] [INFO] [132606568568640] Connected to communication system
+[2026-02-19 14:59:20.397] [INFO] [132606568568640] Received message from project manager: Event dispatcher implementation completed
+[2026-02-19 14:59:20.397] [INFO] [132606568568640] Received message from coder: Testing communication module
+[2026-02-19 14:59:20.397] [INFO] [132606568568640] Received message from tester: Ready for integration testing
+[2026-02-19 14:59:20.398] [INFO] [132606568568640] Received message from coder: All components initialized and ready
+[2026-02-19 14:59:20.398] [INFO] [132606568568640] Received message from project manager: All components initialized and ready
+[2026-02-19 14:59:20.398] [INFO] [132606568568640] Received message from tester: All components initialized and ready
+[2026-02-19 14:59:20.398] [INFO] [132606568568640] All tests completed
+[2026-02-19 14:59:20.398] [INFO] [132606568568640] OpenClaw-CPP system is running
+[2026-02-19 14:59:25.398] [INFO] [132606568568640] OpenClaw-CPP system shut down
